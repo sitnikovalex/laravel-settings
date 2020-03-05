@@ -4,6 +4,7 @@ namespace hackerESQ\Settings;
 
 use DB;
 use Cache;
+use Illuminate\Support\Arr;
 
 class Settings
 {
@@ -46,7 +47,7 @@ class Settings
         // DO WE NEED TO DECRYPT ANYTHING?
         foreach ($settings as $key => $value) {
             if ( in_array( $key, config('settings.encrypt',[]) ) && !empty($value) ) {
-                array_set($settings, $key, decrypt($settings[$key]));
+                Arr::set($settings, $key, decrypt($settings[$key]));
             }
         }
 
@@ -126,7 +127,7 @@ class Settings
         // DO WE NEED TO ENCRYPT ANYTHING?
         foreach ($changes as $key => $value) {
             if ( ( in_array($key, config('settings.encrypt') ) || $encrypt ) && !empty($value)) {
-                array_set($changes, $key, encrypt($value));
+                Arr::set($changes, $key, encrypt($value));
             }
         }
 
@@ -155,7 +156,7 @@ class Settings
                 // array_keys() - will return all the keys or a subset of the keys of an array
                     // this passes array_keys() to array_only() to give current/valid settings only
                         //checks and see if passed settings are  valid options
-            foreach (array_only($changes, array_keys($settings)) as $key => $value) {
+            foreach (Arr::only($changes, array_keys($settings)) as $key => $value) {
                 DB::table('settings')->where([
                     ['key', '=', $key],
                     ['tenant', '=', $tenant]
